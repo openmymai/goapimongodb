@@ -71,7 +71,7 @@ func updateOneMovie(movieId string) model.Netflix {
 		log.Fatal(err)
 	}
 
-	fmt.Println("Modified count: ", result.ModifiedCount)
+	fmt.Println(result)
 	return updateResult
 }
 
