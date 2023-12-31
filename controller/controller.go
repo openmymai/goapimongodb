@@ -60,10 +60,10 @@ func insertOneMovie(movie model.Netflix) {
 func updateOneMovie(movieId string) model.Netflix {
 	id, _ := primitive.ObjectIDFromHex(movieId)
 	filter := bson.M{"_id": id}
-	update := bson.M{"$set": bson.M{"watched": true}}
+	update := bson.D{{Key: "$set", Value: bson.D{{Key: "watched", Value: bson.D{{Key: "$not", Value: "$watched"}}}}}}
 	var updateResult model.Netflix
 
-	result, err := collection.UpdateOne(context.Background(), filter, update)
+	result, err := collection.UpdateOne(context.Background(), filter, mongo.Pipeline{update})
 
 	err = collection.FindOne(context.Background(), filter).Decode(&updateResult)
 
@@ -71,7 +71,7 @@ func updateOneMovie(movieId string) model.Netflix {
 		log.Fatal(err)
 	}
 
-	fmt.Println(result)
+	fmt.Println("Modified Count: ", result.ModifiedCount)
 	return updateResult
 }
 
